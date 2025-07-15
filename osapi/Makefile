@@ -1,4 +1,4 @@
-flags=-O2 -Wall -std=c23
+flags=-O2 -Wall -std=c23 -I.
 ldflags=
 
 .PHONY: clean
