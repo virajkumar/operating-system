@@ -19,6 +19,7 @@ typedef int8 error;
 #define $i (int)
 
 #define ErrNoErr 0
+#define ErrInit 1
 #define ErrIO 4
 #define ErrBadFD 8
 
@@ -32,8 +33,12 @@ typedef int8 error;
 
 error errnumber;
 
+public bool initialized;
+
 /* write 1 char */
 public bool load(fd, int8);
 
 /* read 1 char */
 public int8 store(fd);
+
+public void init(void);

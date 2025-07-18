@@ -3,6 +3,8 @@
 
 private int8 fds[256];
 
+extern public bool initialized;
+
 /* 
     fd=0 -> error 
     fd=1 -> stdin
@@ -11,6 +13,7 @@ private int8 fds[256];
 
 private bool isopen(fd file) {
     signed int posixfd;
+    struct stat _;
 
     if (file < 3)
         return false;
@@ -19,7 +22,7 @@ private bool isopen(fd file) {
     if (!posixfd)
         return false;
     
-    if (fstat(posixfd, NULL) == -1)
+    if (fstat(posixfd, &_) == -1)
         return false;
 
     return true;
@@ -30,6 +33,7 @@ public bool load(fd file, int8 c) {
     signed int n;
     signed int posixfd;
 
+    assert_initialized();
     if (file > 1)
         if(!isopen(file))
             reterr(ErrBadFD);
@@ -56,6 +60,7 @@ public int8 store(fd file) {
     signed int n;
     signed int posixfd;
 
+    assert_initialized();
     if (file > 2)
         if(!isopen(file))
             reterr(ErrBadFD);
@@ -74,4 +79,31 @@ public int8 store(fd file) {
         reterr(ErrIO);
 
     return (int8)*buf;
+}
+
+private void setupfds(void) {
+    zero($1 fds, sizeof(fds));
+
+    fds[0] = 1;
+    fds[1] = 2;
+    
+    return;
+}
+
+private void zero(int8 *str, int16 size) {
+    int8 *p;
+    int16 n;
+
+    for (n=size, p=str; n; n--, p++)
+        *p = (int8)0;
+
+    return;
+}
+
+public void init() {
+    errnumber = (int8)0;
+    setupfds();
+    initialized = true;
+    
+    return;
 }
